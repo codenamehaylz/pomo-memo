@@ -1,8 +1,10 @@
+import Timer from "./components/Timer";
 
 function App() {
   return (
     <div>
         <h1>Pomo-memo</h1>
+        <Timer />
     </div>
   );
 }

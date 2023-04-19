@@ -1,37 +1,48 @@
-import {React, useState} from "react";
-
-//TODO button to start timer
-//TODO button to pause
-//TODO button to reset
+import {React, useState, useEffect} from "react";
 
 function Timer() {
-    let [minutes, setMinutes] = useState(25);
-    let [seconds, setSeconds] = useState(10);
+    const [time, setTime] = useState(25 * 60); // 25 minutes in seconds
+    const [isActive, setIsActive] = useState(false);
+
+    useEffect(() => {
+        let countdown = null;
+
+        if (isActive && time > 0) {
+        countdown = setInterval(() => {
+            setTime(time => time - 1);
+        }, 1000);
+        } else if (!isActive || time === 0) {
+        clearInterval(countdown);
+        }
+
+        return () => clearInterval(countdown);
+    }, [isActive, time]);
+
 
     const startTimer = () => {
-        const timerInterval = setInterval(() => {
-            if (seconds > 0) {
-                setSeconds(seconds => seconds - 1)
-            }
-            if (seconds === 0) {
-                if (minutes === 0) {
-                    clearInterval(timerInterval);
-                } else {
-                    setSeconds(59);
-                    setMinutes(minutes => minutes - 1);
-                }
-            }
-        }, 1000);
+        setIsActive(true);
     };
+    
+    const handlePause = () => {
+        setIsActive(false);
+    };
+    
+    const handleReset = () => {
+        setIsActive(false);
+        setTime(25 * 60);
+    };
+    
+      const minutes = Math.floor(time / 60);
+      const seconds = time % 60;
 
     return (
         <div>
             <h2>{minutes}:{seconds < 10 ? `0${seconds}` : seconds}</h2>
             <button onClick={startTimer}>Start</button>
-            <button>Pause</button>
-            <button>Reset</button>
+            <button onClick={handlePause}>Pause</button>
+            <button onClick={handleReset}>Reset</button>
         </div>
-    )
+    );
 }
 
 export default Timer;
